@@ -128,7 +128,7 @@
     <header class="hero">
       <LineText><p class="eyebrow">★ siêu việt</p></LineText>
       <LineText><h1>{c.intro}</h1></LineText>
-      <LineText><p><Link href="#demo">{c.demo} ↓</Link> · <Link href="#install">{c.install} ↓</Link> · <Link href="https://github.com/legitminh/vietmoi">{c.repo} ↗</Link></p></LineText>
+      <div class="flow-line"><Link href="#demo">{c.demo} ↓</Link> · <Link href="#install">{c.install} ↓</Link> · <Link href="https://github.com/legitminh/vietmoi">{c.repo} ↗</Link></div>
     </header>
 
     <section id="demo" aria-labelledby="demo-heading">
@@ -164,32 +164,32 @@
     <section id="settings" aria-labelledby="settings-heading">
       <LineText><h2 id="settings-heading">{c.settings}</h2></LineText>
       <div class="settings-grid">
-        <LineText><SubKeyframe
+        <div class="flow-line"><SubKeyframe
           label={`${c.language}: ${language === 'vi' ? 'tiếng việt' : 'english'} ▾`}
           backLabel="←"
           items={[
             { id: 'vi', label: 'tiếng việt', on_select: () => language = 'vi' },
             { id: 'en', label: 'english', on_select: () => language = 'en' }
           ]}
-        /></LineText>
-        <LineText><SubKeyframe
+        /></div>
+        <div class="flow-line"><SubKeyframe
           label={`${c.input}: ${inputMode === 'sieuviet' ? 'siêu việt' : 'quốc ngữ'} ▾`}
           backLabel="←"
           items={[
             { id: 'sieuviet', label: 'siêu việt', on_select: () => setInput('sieuviet') },
             { id: 'quocNgu', label: 'quốc ngữ', on_select: () => setInput('quocNgu') }
           ]}
-        /></LineText>
-        <LineText><SubKeyframe
+        /></div>
+        <div class="flow-line"><SubKeyframe
           label={`${c.output}: ${outputMode === 'sieuviet' ? 'siêu việt' : 'quốc ngữ'} ▾`}
           backLabel="←"
           items={[
             { id: 'sieuviet', label: 'siêu việt', on_select: () => outputMode = 'sieuviet' },
             { id: 'quocNgu', label: 'quốc ngữ', on_select: () => outputMode = 'quocNgu' }
           ]}
-        /></LineText>
-        <LineText><ButtonPositional on_close={() => suggestionsEnabled = !suggestionsEnabled}>{c.prediction}: {suggestionsEnabled ? c.on : c.off}</ButtonPositional></LineText>
-        <LineText><ThemeToggle /></LineText>
+        /></div>
+        <div class="flow-line"><ButtonPositional on_close={() => suggestionsEnabled = !suggestionsEnabled}>{c.prediction}: {suggestionsEnabled ? c.on : c.off}</ButtonPositional></div>
+        <div class="flow-line"><ThemeToggle /></div>
       </div>
     </section>
 
@@ -205,10 +205,10 @@
     <section id="install" aria-labelledby="install-heading">
       <LineText><h2 id="install-heading">{c.install}</h2></LineText>
       <LineText><p>macos · iphone / ipad · android</p></LineText>
-      <LineText><p>{c.download}: <Link href="https://github.com/legitminh/vietmoi/releases">github releases ↗</Link></p></LineText>
+      <div class="flow-line">{c.download}: <Link href="https://github.com/legitminh/vietmoi/releases">github releases ↗</Link></div>
     </section>
 
-    <footer><LineText><p><Link href="https://legitminh.github.io/">← {c.portfolio}</Link> · <Link href="https://github.com/legitminh/sieuviet.site">source ↗</Link></p></LineText></footer>
+    <footer><div class="flow-line"><Link href="https://legitminh.github.io/">← {c.portfolio}</Link> · <Link href="https://github.com/legitminh/sieuviet.site">source ↗</Link></div></footer>
   </main>
 </Document>
 
@@ -228,6 +228,7 @@
   h2 { font-size: clamp(1.5rem, 4vw, 3rem); margin-top: 2.5em; }
   h3 { margin-bottom: 0; }
   .eyebrow { letter-spacing: .08em; }
+  .flow-line { min-height: var(--min-box); display: flex; flex-wrap: wrap; align-items: center; gap: 0 .25rem; }
   .demo-shell { border: 1px solid var(--site-line); border-radius: .5rem; overflow: hidden; background: var(--background); box-shadow: .5rem .5rem 0 var(--site-soft); }
   .editor { min-height: 8rem; padding: clamp(1rem, 4vw, 2rem); font-size: clamp(1.5rem, 5vw, 3rem); line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; }
   .editor mark { background: transparent; color: var(--primary); text-decoration: underline; text-decoration-style: dotted; text-underline-offset: .2em; }
