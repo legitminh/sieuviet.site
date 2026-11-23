@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { replaceState } from '$app/navigation';
   import { Document, LineText, Link, ThemeToggle } from '@legitminh/keyflow';
   import DemoScreen from '$lib/demo/DemoScreen.svelte';
 
@@ -46,7 +47,7 @@
   });
 
   function closeDemo() {
-    if (typeof history !== 'undefined') history.replaceState(null, '', `${location.pathname}${location.search}`);
+    if (typeof location !== 'undefined') replaceState(`${location.pathname}${location.search}`, {});
     demoOpen = false;
   }
 </script>
