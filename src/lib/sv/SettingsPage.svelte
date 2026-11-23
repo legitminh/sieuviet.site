@@ -1,10 +1,10 @@
 <script lang="ts">
-  // App settings: color theme, interface language, keypath display and box size.
+  // App settings: color theme, keypath display and box size. The interface language
+  // is picked from the title dropdown in the nav.
   // The theme, keypath and box-size controls are Keyflow's required implementer settings.
   import { Button, LineText, NumberBox, keypath_visibility, min_box, set_theme_id, state_theme, themes,
     type ThemeId } from '@legitminh/keyflow';
-  import { keyboards } from './keyboards.svelte';
-  import { t, ui } from './copy.svelte';
+  import { t } from './copy.svelte';
 
   const defaultBox = 48;
   const boxRange = [32, 96] as const;
@@ -23,15 +23,6 @@
     <span class="label">{t('theme')}</span>
     {#each themeIds as id}
       <Button on_close={() => set_theme_id(id)}><span class:chosen={state_theme.theme_id === id}>{themeName(id)}</span></Button>
-    {/each}
-  </div>
-
-  <div class="field" role="group" aria-label={t('language')}>
-    <span class="label">{t('language')}</span>
-    {#each ['vi', 'en'] as const as language}
-      <Button on_close={() => keyboards.setInterfaceLanguage(language)}>
-        <span class:chosen={ui.language === language}>{t(language === 'vi' ? 'vietnamese' : 'english')}</span>
-      </Button>
     {/each}
   </div>
 

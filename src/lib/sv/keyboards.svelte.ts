@@ -79,7 +79,7 @@ function normalize(value: Partial<KeyboardState> | null | undefined, base = defa
   return {
     profiles,
     activeID: profiles.some((profile) => profile.id === value?.activeID) ? String(value?.activeID) : profiles[0].id,
-    interfaceLanguage: value?.interfaceLanguage === 'en' ? 'en' : value?.interfaceLanguage === 'vi' ? 'vi' : base.interfaceLanguage,
+    interfaceLanguage: value?.interfaceLanguage === 'en' || value?.interfaceLanguage === 'vi' || value?.interfaceLanguage === 'zh' ? value.interfaceLanguage : base.interfaceLanguage,
     shiftTapSeconds: Number.isFinite(seconds) && seconds >= shiftTapRange[0] && seconds <= shiftTapRange[1] ? seconds : defaultShiftTapSeconds
   };
 }

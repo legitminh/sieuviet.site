@@ -23,6 +23,16 @@
       cursor: 'on phones, hold space and drag to move the cursor. hold shift for capitals; double tap for caps lock.',
       modes: 'siêu việt is the default output. quốc ngữ turns completed words into standard spelling with the same four-choice flow.',
       download: 'source and releases', source: 'source', portfolio: 'minh.website'
+    },
+    zh: {
+      intro: '按读音输入越南语：依次选择声母、元音、韵尾和声调。',
+      try: '试用键盘', keyboards: '管理键盘', install: '安装', guide: '工作原理',
+      flow: '每个音节需要四次选择。每个实体键上的标签会随当前选择而变化。',
+      example: 'quốc → k · uô · c · sắc',
+      manage: 'siêu việt 管理一个键盘列表。每个键盘都有自己的语言、布局和输出。轻点 shift 切换到下一个键盘。',
+      cursor: '在手机上，按住空格并拖动来移动光标。按住 shift 输入大写；连按两次锁定大写。',
+      modes: 'siêu việt 是默认输出。quốc ngữ 用同样的四步流程把完成的词转换为标准拼写。',
+      download: '源代码和发行版', source: '源代码', portfolio: 'minh.website'
     }
   } as const;
   let c = $derived(copy[ui.language]);
