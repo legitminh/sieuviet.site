@@ -5,15 +5,16 @@
   import IntroPage from '$lib/sv/IntroPage.svelte';
   import KeyboardsPage from '$lib/sv/KeyboardsPage.svelte';
   import TryPage from '$lib/sv/TryPage.svelte';
+  import SettingsPage from '$lib/sv/SettingsPage.svelte';
   import { keyboards } from '$lib/sv/keyboards.svelte';
   import { ui } from '$lib/sv/copy.svelte';
 
-  // One app, three pages: the website opens on the intro, the native apps on the keyboards.
+  // One app, three pages plus settings: the website opens on the intro, the native apps on the keyboards.
   let page = $state<Page>('intro');
   let ready = $state(false);
   const fromHash = (): Page | null => {
     const hash = location.hash.slice(1);
-    return hash === 'keyboards' || hash === 'try' ? hash : hash === 'intro' ? 'intro' : hash === 'demo' ? 'try' : null;
+    return hash === 'keyboards' || hash === 'try' || hash === 'settings' ? hash : hash === 'intro' ? 'intro' : hash === 'demo' ? 'try' : null;
   };
 
   onMount(() => {
@@ -45,6 +46,6 @@
 {:else}
   <Document>
     {@render nav()}
-    {#if page === 'keyboards'}<KeyboardsPage />{:else}<IntroPage {go} />{/if}
+    {#if page === 'keyboards'}<KeyboardsPage />{:else if page === 'settings'}<SettingsPage />{:else}<IntroPage {go} />{/if}
   </Document>
 {/if}

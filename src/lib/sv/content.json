@@ -438,5 +438,49 @@
   "acceptSuggestionHelp": {
     "vi": "Tab hoặc chạm để chọn gợi ý. Dấu cách không chọn gợi ý.",
     "en": "Tab or tap to accept a suggestion. Space never accepts one."
+  },
+  "theme": {
+    "vi": "Màu giao diện",
+    "en": "Color theme"
+  },
+  "themeLight": {
+    "vi": "Sáng",
+    "en": "Light"
+  },
+  "themeDark": {
+    "vi": "Tối",
+    "en": "Dark"
+  },
+  "themeSystem": {
+    "vi": "Theo hệ thống",
+    "en": "System"
+  },
+  "keypaths": {
+    "vi": "Phím tắt trên nút",
+    "en": "Keypath display"
+  },
+  "keypathsShown": {
+    "vi": "Hiện",
+    "en": "Shown"
+  },
+  "keypathsHidden": {
+    "vi": "Ẩn",
+    "en": "Hidden"
+  },
+  "keypathsHelp": {
+    "vi": "Phím tắt vẫn hoạt động khi ẩn.",
+    "en": "Shortcuts keep working while hidden."
+  },
+  "boxSize": {
+    "vi": "Cỡ ô",
+    "en": "Box size"
+  },
+  "boxSizeHelp": {
+    "vi": "Phóng to hoặc thu nhỏ mọi nút và khoảng cách. Mặc định {size} px.",
+    "en": "Scales every button and spacing. Default {size} px."
+  },
+  "pageSettings": {
+    "vi": "cài đặt",
+    "en": "settings"
   }
 }

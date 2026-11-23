@@ -73,14 +73,6 @@
     {/each}
   </ol>
 
-  <div class="field" role="group" aria-label={t('language')}>
-    <span class="label">{t('language')}</span>
-    {#each ['vi', 'en'] as const as language}
-      <Button on_close={() => keyboards.setInterfaceLanguage(language)}>
-        <span class:chosen={ui.language === language}>{t(language === 'vi' ? 'vietnamese' : 'english')}</span>
-      </Button>
-    {/each}
-  </div>
   <LineText><p class="muted">{t('roundHelp')}</p></LineText>
   <div class="field" role="group" aria-label={t('shiftLimit')}>
     <span class="label">{t('shiftLimit')}</span>

@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { Button, ThemeToggle, KeypathToggle } from '@legitminh/keyflow';
-  import { keyboards } from './keyboards.svelte';
-  import { t, ui } from './copy.svelte';
-  export type Page = 'intro' | 'keyboards' | 'try';
+  import { Button } from '@legitminh/keyflow';
+  import { t } from './copy.svelte';
+  export type Page = 'intro' | 'keyboards' | 'try' | 'settings';
   let { page, go }: { page: Page; go: (page: Page) => void } = $props();
   const pages: Page[] = ['intro', 'keyboards', 'try'];
-  const names = { intro: 'pageIntro', keyboards: 'pageKeyboards', try: 'pageTry' } as const;
+  const names = { intro: 'pageIntro', keyboards: 'pageKeyboards', try: 'pageTry', settings: 'pageSettings' } as const;
 </script>
 
 <nav class="sv-nav" aria-label="siêu việt">
@@ -16,9 +15,10 @@
     </Button>
   {/each}
   <span class="spacer"></span>
-  <Button priority={3} on_close={() => keyboards.setInterfaceLanguage(ui.language === 'vi' ? 'en' : 'vi')}>{ui.language === 'vi' ? 'english' : 'tiếng việt'}</Button>
-  <ThemeToggle />
-  <KeypathToggle />
+  <Button priority={3} on_close={() => go('settings')}>
+    <span class="gear" class:current={page === 'settings'} aria-current={page === 'settings' ? 'page' : undefined}
+      role="img" aria-label={t('settings')} title={t('settings')}>⚙</span>
+  </Button>
 </nav>
 
 <style>
@@ -28,5 +28,6 @@
   .sv-nav :global(*) { font-size: inherit; }
   .brand { letter-spacing: .04em; margin-right: .25rem; }
   .spacer { flex: 1 1 auto; }
+  .gear { font-size: 1.5em; line-height: 1; }
   .current { font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
 </style>
