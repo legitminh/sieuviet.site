@@ -23,9 +23,8 @@
     () => keyboard?.isCapsLock() ?? false
   );
   method.onchange = () => { revision = method.revision; };
-  // On computers the apps' demo field uses the installed input method itself.
-  const desktopApp = ['macos', 'windows', 'linux'].includes(keyboards.platform);
-  let showKeyboard = $derived(!desktopApp && (touch || keyboards.active.showVirtualKeyboard));
+  // Touch screens always need the on-screen keyboard; computers follow the keyboard's guide setting.
+  let showKeyboard = $derived(touch || keyboards.active.showVirtualKeyboard);
 
   onMount(() => {
     const press = (down: boolean) => (event: KeyboardEvent) => {
@@ -46,7 +45,7 @@
 <div class="try-page">
   {@render nav()}
   <p class="status" aria-live="polite">{t('typingWith', { name: keyboards.displayName(keyboards.active) })} · {t('tryHelp')}</p>
-  <TextBox bind:this={editor} bind:value={text} inputMethod={desktopApp ? undefined : method} label={t('tryTyping')} placeholder={t('tryTyping')}
+  <TextBox bind:this={editor} bind:value={text} inputMethod={method} label={t('tryTyping')} placeholder={t('tryTyping')}
     enterTrigger="t" rows={6} class="try-editor" spellcheck={false} autocomplete="off" autocapitalize="off"
     inputmode={touch ? 'none' : undefined} />
   {#if showKeyboard}

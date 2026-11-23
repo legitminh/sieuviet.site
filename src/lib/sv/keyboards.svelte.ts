@@ -35,14 +35,23 @@ declare global {
     /** Injected by the native app before the page loads. */
     __SIEUVIET_NATIVE__?: { platform: 'macos' | 'ios' | 'android' | 'windows' | 'linux'; state?: Partial<KeyboardState> };
     webkit?: { messageHandlers?: { sieuviet?: NativeBridge } };
-    sieuvietAndroid?: { postMessage(json: string): void };
+    sieuvietAndroid?: { postMessage(json: string): void; getState(): string; platform(): string };
     /** Called by the native app when its settings change elsewhere (for example a Shift tap). */
     sieuvietReceive?: (state: Partial<KeyboardState>) => void;
   }
 }
 
 const storageKey = 'sieuviet:keyboards.v1';
-const uuid = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+// Native stores decode Foundation UUIDs, so always produce RFC 4122 v4 text (randomUUID needs a secure context).
+function uuid() {
+  const bytes = new Uint8Array(16);
+  if (globalThis.crypto?.getRandomValues) globalThis.crypto.getRandomValues(bytes);
+  else for (let i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`.toUpperCase();
+}
 
 export function makeProfile(language: KeyboardLanguage, name: string): KeyboardProfile {
   return { id: uuid(), name, language, inputType: paradigms[language].inputs[0],
@@ -81,7 +90,10 @@ class KeyboardStore {
   active = $derived(this.state.profiles.find((profile) => profile.id === this.state.activeID) ?? this.state.profiles[0]);
 
   load() {
-    const native = typeof window !== 'undefined' ? window.__SIEUVIET_NATIVE__ : undefined;
+    let native = typeof window !== 'undefined' ? window.__SIEUVIET_NATIVE__ : undefined;
+    if (!native && typeof window !== 'undefined' && window.sieuvietAndroid) {
+      try { native = { platform: 'android', state: JSON.parse(window.sieuvietAndroid.getState()) }; } catch { native = { platform: 'android' }; }
+    }
     if (native) {
       this.platform = native.platform;
       this.state = normalize(native.state);
