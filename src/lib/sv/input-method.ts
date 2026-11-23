@@ -23,6 +23,8 @@ export class SieuvietInputMethod implements TextInputMethod {
   /** Bumped on every state change so the on-screen labels can follow the engine. */
   revision = 0;
   onchange: (() => void) | undefined;
+  /** Tab accepts the first suggestion when this returns true. Space never accepts one. */
+  onaccept: ((composition: TextComposition) => boolean) | undefined;
 
   constructor(
     private profile: () => KeyboardProfile,
@@ -83,6 +85,12 @@ export class SieuvietInputMethod implements TextInputMethod {
     this.changed();
   }
 
+  /** Finish any partial syllable as typed, before a client edit such as accepting a suggestion. */
+  finish(composition: TextComposition) {
+    this.sync(composition);
+    if (this.engine.pending) this.apply(this.engine.finishPartial(), composition);
+    this.recentCommit = null;
+  }
   /** Finish a partial syllable as typed, then let the key behave normally. */
   private passthrough(composition: TextComposition) {
     if (this.engine.pending) {
@@ -116,6 +124,8 @@ export class SieuvietInputMethod implements TextInputMethod {
       }
       if (this.shiftTap) this.shiftTap.eligible = false;
     }
+    if (input.key === 'Tab' && !input.shiftKey && !input.ctrlKey && !input.metaKey && !input.altKey &&
+        this.onaccept?.(composition)) { this.consumed.add(id); return true; }
     if (input.code === modeTapCode) { this.modeTap(composition); this.consumed.add(id); return true; }
     this.sync(composition);
     if (input.ctrlKey || input.metaKey || input.altKey) return this.passthrough(composition);
