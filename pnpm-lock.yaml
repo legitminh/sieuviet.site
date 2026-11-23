@@ -62,7 +62,7 @@ packages:
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
   '@legitminh/keyflow@file:vendor/legitminh-keyflow-0.12.0.tgz':
-    resolution: {integrity: sha512-tPwyaz+s7Uijeb1o+NbUpC1Nwy5+4+EER8GAxHx2rSeTEVEIVYIX+otGoTk26ed3jA8aeGh5G8UrJA1u0oaiRQ==}
+    resolution: {integrity: sha512-tPwyaz+s7Uijeb1o+NbUpC1Nwy5+4+EER8GAxHx2rSeTEVEIVYIX+otGoTk26ed3jA8aeGh5G8UrJA1u0oaiRQ==, tarball: file:vendor/legitminh-keyflow-0.12.0.tgz}
     version: 0.12.0
     engines: {node: '>=22'}
     peerDependencies:
