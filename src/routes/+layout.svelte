@@ -4,6 +4,6 @@
   let { children } = $props();
 </script>
 
-<Keyflow options={{ storagePrefix: 'sieuviet.site:', keys: key_presets.alphanumeric, lockstep: false }}>
+<Keyflow options={{ storagePrefix: 'sieuviet.site:', keys: key_presets.alphanumeric, lockstep: false, keypathVisible: 'auto' }}>
   {@render children()}
 </Keyflow>

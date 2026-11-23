@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { ondelete, pressed = false }: { ondelete: () => void; pressed?: boolean } = $props();
+  let { ondelete, pressed = false, label = "backspace" }: { ondelete: () => void; pressed?: boolean; label?: string } = $props();
   let delay: ReturnType<typeof setTimeout> | undefined;
   let repeat: ReturnType<typeof setInterval> | undefined;
   let held = $state(false);
@@ -24,7 +24,7 @@
 <button
   type="button"
   class:pressed={pressed || held}
-  aria-label="xóa"
+  aria-label={label}
   onpointerdown={start}
   onpointerup={stop}
   onpointercancel={stop}

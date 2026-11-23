@@ -1,5 +1,6 @@
 <script lang="ts">
-  let { onpress, ondragstart, onmove, pressed = false }: {
+  let { onpress, ondragstart, onmove, pressed = false, label = "space" }: {
+    label?: string;
     onpress: () => void;
     ondragstart: () => void;
     onmove: (steps: number) => void;
@@ -54,7 +55,7 @@
 <button
   type="button"
   class:pressed={pressed || dragging}
-  aria-label="dấu cách; giữ và kéo để di chuyển con trỏ"
+  aria-label={label}
   onpointerdown={down}
   onpointermove={move}
   onpointerup={up}
