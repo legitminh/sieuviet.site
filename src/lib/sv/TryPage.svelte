@@ -82,7 +82,7 @@
 <div class="try-page">
   {@render nav()}
   <p class="status" aria-live="polite">{t('typingWith', { name: keyboards.displayName(keyboards.active) })} · {t('tryHelp')}</p>
-  <div class="suggestions" aria-label={t('suggestions')}>
+  <div class="suggestions" aria-label={t('suggestions')} data-keyflow-textbox-keep-open>
     <button type="button" class="toggle" onpointerdown={(event) => event.preventDefault()} onclick={toggleSuggestions}>
       {suggestionsOn ? t('suggestionsOn') : t('suggestionsOff')}</button>
     {#if suggestionsOn}
@@ -96,7 +96,7 @@
     enterTrigger="t" rows={6} class="try-editor" spellcheck={false} autocomplete="off" autocapitalize="off"
     inputmode={touch ? 'none' : undefined} />
   {#if showKeyboard}
-    <div class="dock"><TouchKeyboard bind:this={keyboard} {method} {revision} {pressed} /></div>
+    <div class="dock" data-keyflow-textbox-keep-open><TouchKeyboard bind:this={keyboard} {method} {revision} {pressed} /></div>
   {/if}
 </div>
 

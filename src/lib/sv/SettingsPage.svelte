@@ -1,10 +1,14 @@
 <script lang="ts">
-  // App settings: color theme, keypath display and box size. The interface language
-  // is picked from the title dropdown in the nav.
+  // App settings: interface language, color theme, keypath display and box size.
   // The theme, keypath and box-size controls are Keyflow's required implementer settings.
-  import { Button, LineText, keypath_visibility, min_box, set_theme_id, state_theme, themes,
+  import { Button, LineText, SubKeyframe, type SubKeyframeItem, keypath_visibility, min_box, set_theme_id, state_theme, themes,
     type ThemeId } from '@legitminh/keyflow';
-  import { t } from './copy.svelte';
+  import { t, ui, languages, languageNames } from './copy.svelte';
+  import { keyboards } from './keyboards.svelte';
+  let languageItems = $derived<SubKeyframeItem[]>(languages.map((language) => ({
+    id: language, label: `${ui.language === language ? '✓ ' : ''}${languageNames[language]}`,
+    on_select: () => keyboards.setInterfaceLanguage(language)
+  })));
 
   const defaultBox = 48;
   // Box size steps multiply the current value, so each press feels the same at any size.
@@ -17,6 +21,13 @@
 
 <section class="settings">
   <LineText><h1>{t('settings')}</h1></LineText>
+
+  <div class="field" role="group" aria-label={t('language')}>
+    <span class="label">{t('language')}</span>
+    <SubKeyframe label={t('language')} items={languageItems} backLabel={t('back')} presentation="overlay">
+      {#snippet triggerContent()}<span class="chosen">{languageNames[ui.language]}</span> ▾{/snippet}
+    </SubKeyframe>
+  </div>
 
   <div class="field" role="group" aria-label={t('theme')}>
     <span class="label">{t('theme')}</span>

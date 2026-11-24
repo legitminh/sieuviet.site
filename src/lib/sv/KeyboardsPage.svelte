@@ -18,9 +18,7 @@
   $effect(() => { seconds = keyboards.state.shiftTapSeconds; });
 </script>
 
-<section class="keyboards" aria-labelledby="keyboards-heading">
-  <LineText><h1 id="keyboards-heading">★ siêu việt</h1></LineText>
-  <LineText><p class="muted">{t('tagline')}</p></LineText>
+<section class="keyboards" aria-label={t('keyboardsHeading')}>
   <div class="heading-row">
     <LineText><h2>{t('keyboardsHeading')}</h2></LineText>
     <Button on_close={() => keyboards.add()}>+ {t('addKeyboard')}</Button>
@@ -33,7 +31,10 @@
       {@const active = profile.id === keyboards.state.activeID}
       <li class="card" class:active aria-current={active ? 'true' : undefined}>
         <div class="card-head">
-          <strong>{name}</strong>
+          <SubKeyframe label={t('languageProfile', { name })} items={languageItems(profile.id, profile.language)}
+            backLabel={t('back')} presentation="overlay" class="language-menu card-title">
+            {#snippet triggerContent()}<span class="chosen">{languageName(profile.language)}</span> ▾{/snippet}
+          </SubKeyframe>
           <span class="actions">
             {#if active}<span class="selected">✓ {t('selected')}</span>
             {:else}<Button on_close={() => keyboards.select(profile.id)}>{t('select')}</Button>{/if}
@@ -41,13 +42,6 @@
               <Button on_close={() => keyboards.remove(profile.id)}>− {t('removeKeyboard')}</Button>
             {/if}
           </span>
-        </div>
-        <div class="field" role="group" aria-label={t('languageProfile', { name })}>
-          <span class="label">{t('keyboardLanguage')}</span>
-          <SubKeyframe label={t('languageProfile', { name })} items={languageItems(profile.id, profile.language)}
-            backLabel={t('back')} presentation="overlay" class="language-menu">
-            {#snippet triggerContent()}<span class="chosen">{languageName(profile.language)}</span> ▾{/snippet}
-          </SubKeyframe>
         </div>
         {#if paradigms[profile.language].inputs.length > 1}
           <div class="field" role="group" aria-label={t('inputProfile', { name })}>
@@ -98,8 +92,8 @@
 </section>
 
 <style>
+  .keyboards :global(.card-title .subkeyframe-trigger) { font-weight: 700; }
   .keyboards { width: min(100%, 46rem); margin: 0 auto; padding: 0 calc(var(--min-box) / 2) calc(var(--min-box) * 2); box-sizing: border-box; }
-  h1 { margin-bottom: 0; }
   .muted { opacity: .65; font-size: .9em; }
   .heading-row, .card-head, .field { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .5rem; min-height: var(--min-box); }
   .heading-row { justify-content: space-between; }

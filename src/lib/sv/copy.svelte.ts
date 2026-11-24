@@ -3,7 +3,7 @@ import content from './content.json';
 export type Language = 'vi' | 'en' | 'zh';
 export const languages: Language[] = ['zh', 'en', 'vi'];
 /** Each interface language is named in itself. */
-export const languageNames: Record<Language, string> = { zh: '中文', en: 'English', vi: 'Tiếng Việt' };
+export const languageNames: Record<Language, string> = { zh: '中文', en: 'english', vi: 'tiếng việt' };
 type Key = keyof typeof content;
 
 /** Interface language, shared by every page. Vietnamese is the default, as in the native apps. */
