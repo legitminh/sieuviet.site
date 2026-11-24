@@ -19,6 +19,8 @@
 
   let view = $derived(core.state);
   let grid = $derived(view?.input === 'grid4x8' && !view.ascii && view.page === 0);
+  // The letter layer types the keyboard's own comma and period (，。 for Chinese); number and symbol panes keep , and .
+  let marks = $derived<[string, string]>(view?.page === 0 && view.marks ? view.marks : [',', '.']);
   let touching = $state<string | null>(null);
   let rows = $derived(!view ? [] : view.page !== 0
     ? (view.symbols[view.page - 1] ?? []).map((row) => [...row].map((character) => ({ position: character, code: -1, title: character as string | null })))
@@ -82,9 +84,9 @@
           onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.newline)}><span>↵</span></button>
       {:else}
         <button type="button" class="key" class:pressed={pressed.has(',')} aria-label={t('comma')}
-          onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.literal, 0, ',')}><span>,</span></button>
+          onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.literal, 0, marks[0])}><span>{marks[0]}</span></button>
         <button type="button" class="key" class:pressed={pressed.has('.')} aria-label={t('period')}
-          onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.literal, 0, '.')}><span>.</span></button>
+          onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.literal, 0, marks[1])}><span>{marks[1]}</span></button>
       {/if}
     </div>
   </section>

@@ -18,6 +18,8 @@ export interface KeyboardProfile {
   showVirtualKeyboard: boolean;
   /** Completion suggestions for this keyboard; Tab or a tap accepts one, Space never does. */
   suggestionsEnabled: boolean;
+  /** Vietnamese: a phrase mark after a block replaces its automatic space ("mệt quá !" → "mệt quá! "). */
+  adaptivePunctuation: boolean;
 }
 export interface KeyboardState {
   profiles: KeyboardProfile[];
@@ -63,7 +65,7 @@ function uuid() {
 
 export function makeProfile(language: KeyboardLanguage, name: string): KeyboardProfile {
   return { id: uuid(), name, language, inputType: paradigms[language].inputs[0], inputMode: paradigms[language].modes[0],
-    outputType: paradigms[language].outputs[0], showVirtualKeyboard: true, suggestionsEnabled: true };
+    outputType: paradigms[language].outputs[0], showVirtualKeyboard: true, suggestionsEnabled: true, adaptivePunctuation: true };
 }
 function defaults(): KeyboardState {
   const vietnamese = makeProfile('vi', 'Default keyboard');
@@ -83,7 +85,8 @@ function normalize(value: Partial<KeyboardState> | null | undefined, base = defa
       inputMode: allowed.modes.includes(profile.inputMode) ? profile.inputMode : allowed.modes[0],
       outputType: allowed.outputs.includes(profile.outputType) ? profile.outputType : allowed.outputs[0],
       showVirtualKeyboard: profile.showVirtualKeyboard !== false,
-      suggestionsEnabled: profile.suggestionsEnabled !== false
+      suggestionsEnabled: profile.suggestionsEnabled !== false,
+      adaptivePunctuation: profile.adaptivePunctuation !== false
     };
   });
   if (!profiles.length) profiles.push(...base.profiles);
