@@ -1,7 +1,7 @@
 <script lang="ts">
   // Keyboard management, matching the Mac settings window: the list switched
   // by a Shift tap, each keyboard's language, input and output, and the tap limit.
-  import { Button, LineText, NumberBox } from '@legitminh/keyflow';
+  import { Button, LineText, NumberBox, SubKeyframe, type SubKeyframeItem } from '@legitminh/keyflow';
   import { keyboards, paradigms, defaultShiftTapSeconds, shiftTapRange, type KeyboardLanguage, type OutputType } from './keyboards.svelte';
   import { t, ui } from './copy.svelte';
 
@@ -9,6 +9,11 @@
   const suggestionsHelp = (language: KeyboardLanguage) => t(language === 'vi' ? 'suggestionsHelp.vietnamese' : language === 'en' ? 'suggestionsHelp.english' : 'suggestionsHelp.chinese');
   const outputName = (output: OutputType) => output === 'literal' ? t('literalOutput') : output === 'sieuviet' ? 'siêu việt'
     : output === 'Simplified Chinese' ? t('simplifiedChinese') : output;
+  /** Each keyboard's language is a dropdown of the languages this app offers. */
+  const languageItems = (id: string, current: KeyboardLanguage): SubKeyframeItem[] => keyboards.languages.map((language) => ({
+    id: language, label: `${current === language ? '✓ ' : ''}${languageName(language)}`,
+    on_select: () => keyboards.update(id, { language })
+  }));
   let seconds = $state(keyboards.state.shiftTapSeconds);
   $effect(() => { seconds = keyboards.state.shiftTapSeconds; });
 </script>
@@ -39,11 +44,10 @@
         </div>
         <div class="field" role="group" aria-label={t('languageProfile', { name })}>
           <span class="label">{t('keyboardLanguage')}</span>
-          {#each keyboards.languages as language}
-            <Button on_close={() => keyboards.update(profile.id, { language })}>
-              <span class:chosen={profile.language === language}>{languageName(language)}</span>
-            </Button>
-          {/each}
+          <SubKeyframe label={t('languageProfile', { name })} items={languageItems(profile.id, profile.language)}
+            backLabel={t('back')} class="language-menu">
+            {#snippet triggerContent()}<span class="chosen">{languageName(profile.language)}</span> ▾{/snippet}
+          </SubKeyframe>
         </div>
         {#if paradigms[profile.language].inputs.length > 1}
           <div class="field" role="group" aria-label={t('inputProfile', { name })}>
@@ -94,6 +98,8 @@
 </section>
 
 <style>
+  /* Drop the language menu over the card instead of pushing the fields apart. */
+  .keyboards :global(.language-menu .subkeyframe-panel) { position: absolute; top: 100%; left: 0; z-index: 20; min-width: 16rem; white-space: nowrap; }
   .keyboards { width: min(100%, 46rem); margin: 0 auto; padding: 0 calc(var(--min-box) / 2) calc(var(--min-box) * 2); box-sizing: border-box; }
   h1 { margin-bottom: 0; }
   .muted { opacity: .65; font-size: .9em; }
