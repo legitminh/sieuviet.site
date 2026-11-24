@@ -2,14 +2,13 @@
   // App settings: color theme, keypath display and box size. The interface language
   // is picked from the title dropdown in the nav.
   // The theme, keypath and box-size controls are Keyflow's required implementer settings.
-  import { Button, LineText, NumberBox, keypath_visibility, min_box, set_theme_id, state_theme, themes,
+  import { Button, LineText, keypath_visibility, min_box, set_theme_id, state_theme, themes,
     type ThemeId } from '@legitminh/keyflow';
   import { t } from './copy.svelte';
 
   const defaultBox = 48;
-  const boxRange = [32, 96] as const;
-  let box = $state(min_box.value);
-  $effect(() => { box = min_box.value; });
+  // Box size steps multiply the current value, so each press feels the same at any size.
+  const boxRange = [12, 192] as const;
   const setBox = (value: number) => min_box.set(Math.min(boxRange[1], Math.max(boxRange[0], Math.round(value))));
   const themeName = (id: ThemeId) => id === 'system' ? t('themeSystem')
     : themes[id].colorScheme === 'dark' ? t('themeDark') : themes[id].colorScheme === 'light' ? t('themeLight') : themes[id].name;
@@ -35,10 +34,9 @@
 
   <div class="field" role="group" aria-label={t('boxSize')}>
     <span class="label">{t('boxSize')}</span>
-    <Button on_close={() => setBox(min_box.value - 4)}>−</Button>
-    <NumberBox bind:value={box} min={boxRange[0]} max={boxRange[1]} step={1} label={t('boxSize')} format={(value) => `${value} px`}
-      onchange={setBox} />
-    <Button on_close={() => setBox(min_box.value + 4)}>+</Button>
+    <Button on_close={() => setBox(min_box.value * 0.75)}>× 0.75</Button>
+    <span class="value" aria-live="polite">{min_box.value} px</span>
+    <Button on_close={() => setBox(min_box.value * 1.25)}>× 1.25</Button>
     <Button on_close={() => setBox(defaultBox)}>{t('reset')}</Button>
   </div>
   <LineText><p class="muted">{t('boxSizeHelp', { size: String(defaultBox) })}</p></LineText>
@@ -49,5 +47,6 @@
   .field { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .5rem; min-height: var(--min-box); }
   .label { min-width: 14ch; font-size: .8em; opacity: .65; }
   .muted { opacity: .65; font-size: .9em; }
+  .value { min-width: 6ch; text-align: center; }
   .chosen { font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
 </style>
