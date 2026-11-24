@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # vietmoi's web-core workflow sends this when the shared engine changes on main.
+  repository_dispatch:
+    types: [core-changed]
 
 permissions:
   contents: read
@@ -16,9 +19,27 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      # Build the WebAssembly core from the latest vietmoi main so the demo always types like the apps.
+      - uses: actions/checkout@v4
+        with:
+          repository: legitminh/vietmoi
+          path: vietmoi
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.swift-wasm
+            ~/.swiftpm
+            ~/.config/swiftpm
+          key: swift-wasm-6.4.2-${{ runner.os }}
+      - if: hashFiles('vietmoi/scripts/build-wasm.py') != ''
+        run: vietmoi/scripts/install-swift-wasm.sh
+      - if: hashFiles('vietmoi/scripts/build-wasm.py') != ''
+        run: python3 vietmoi/scripts/build-wasm.py --output static/core
+      - if: hashFiles('vietmoi/scripts/build-wasm.py') != ''
+        run: node vietmoi/Web/Tests/smoke.mjs static/core/sieuviet.wasm static/core/pinyin_simp.txt
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -28,6 +49,8 @@ jobs:
       - run: pnpm check && pnpm build
         env:
           BASE_PATH: /sieuviet.site
+          SIEUVIET_CORE: vietmoi
+          CI: true
       - uses: actions/configure-pages@v5
         with:
           enablement: true
