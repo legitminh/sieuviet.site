@@ -27,8 +27,8 @@
   // Suggestions are computed in idle time after the text changes, never on the
   // key path, so typing speed does not depend on them. Space types a space; only
   // Tab or a tap accepts a suggestion.
-  const suggestionsKey = 'sieuviet:suggestions';
-  let suggestionsOn = $state((() => { try { return localStorage.getItem(suggestionsKey) !== 'off'; } catch { return true; } })());
+  // Each keyboard keeps its own suggestions setting, shared with the native keyboards.
+  let suggestionsOn = $derived(keyboards.active.suggestionsEnabled && keyboards.active.language !== 'zh');
   let suggestions = $state<string[]>([]);
   const wordAtEnd = (value: string) => value.match(/\p{L}+$/u)?.[0] ?? '';
   $effect(() => {
@@ -43,8 +43,7 @@
     return () => clearTimeout(handle);
   });
   function toggleSuggestions() {
-    suggestionsOn = !suggestionsOn;
-    try { localStorage.setItem(suggestionsKey, suggestionsOn ? 'on' : 'off'); } catch { /* keep in memory */ }
+    keyboards.update(keyboards.active.id, { suggestionsEnabled: !keyboards.active.suggestionsEnabled });
   }
   /** Complete the word at the caret with `suffix`, then a space. */
   function acceptInto(composition: import('@legitminh/keyflow').TextComposition, suffix: string) {

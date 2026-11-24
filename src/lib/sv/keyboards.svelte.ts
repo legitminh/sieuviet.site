@@ -2,9 +2,9 @@
 // so a native shell can hand its state to this UI and receive every change back.
 import { t, ui, type Language } from './copy.svelte';
 
-export type KeyboardLanguage = 'vi' | 'en';
-export type InputType = 'ascii+' | 'grid4x8' | 'qwerty';
-export type OutputType = 'sieuviet' | 'quốc ngữ' | 'literal';
+export type KeyboardLanguage = 'vi' | 'en' | 'zh';
+export type InputType = 'ascii+' | 'grid4x8' | 'qwerty' | 'Microsoft Shuangpin';
+export type OutputType = 'sieuviet' | 'quốc ngữ' | 'literal' | 'Simplified Chinese';
 
 export interface KeyboardProfile {
   id: string;
@@ -13,6 +13,8 @@ export interface KeyboardProfile {
   inputType: InputType;
   outputType: OutputType;
   showVirtualKeyboard: boolean;
+  /** Completion suggestions for this keyboard; Tab or a tap accepts one, Space never does. */
+  suggestionsEnabled: boolean;
 }
 export interface KeyboardState {
   profiles: KeyboardProfile[];
@@ -24,8 +26,11 @@ export interface KeyboardState {
 /** Each keyboard language allows its own input layouts and outputs; the first is the default. */
 export const paradigms: Record<KeyboardLanguage, { inputs: InputType[]; outputs: OutputType[] }> = {
   vi: { inputs: ['ascii+', 'grid4x8'], outputs: ['sieuviet', 'quốc ngữ'] },
-  en: { inputs: ['qwerty'], outputs: ['literal'] }
+  en: { inputs: ['qwerty'], outputs: ['literal'] },
+  zh: { inputs: ['Microsoft Shuangpin'], outputs: ['Simplified Chinese'] }
 };
+/** Chinese (Microsoft Shuangpin with the offline pinyin dictionary) is typed by the Mac and iOS keyboards. */
+const chinesePlatforms = ['macos', 'ios'];
 export const defaultShiftTapSeconds = 0.2;
 export const shiftTapRange = [0.01, 5] as const;
 
@@ -55,7 +60,7 @@ function uuid() {
 
 export function makeProfile(language: KeyboardLanguage, name: string): KeyboardProfile {
   return { id: uuid(), name, language, inputType: paradigms[language].inputs[0],
-    outputType: paradigms[language].outputs[0], showVirtualKeyboard: true };
+    outputType: paradigms[language].outputs[0], showVirtualKeyboard: true, suggestionsEnabled: true };
 }
 function defaults(): KeyboardState {
   const vietnamese = makeProfile('vi', 'Default keyboard');
@@ -65,13 +70,14 @@ function defaults(): KeyboardState {
 /** Repair any saved or native state into an allowed combination. */
 function normalize(value: Partial<KeyboardState> | null | undefined, base = defaults()): KeyboardState {
   const profiles = (value?.profiles ?? base.profiles).filter((profile) => profile && profile.id).map((profile) => {
-    const language: KeyboardLanguage = profile.language === 'en' ? 'en' : 'vi';
+    const language: KeyboardLanguage = profile.language === 'en' || profile.language === 'zh' ? profile.language : 'vi';
     const allowed = paradigms[language];
     return {
       id: String(profile.id), name: String(profile.name ?? ''), language,
       inputType: allowed.inputs.includes(profile.inputType) ? profile.inputType : allowed.inputs[0],
       outputType: allowed.outputs.includes(profile.outputType) ? profile.outputType : allowed.outputs[0],
-      showVirtualKeyboard: profile.showVirtualKeyboard !== false
+      showVirtualKeyboard: profile.showVirtualKeyboard !== false,
+      suggestionsEnabled: profile.suggestionsEnabled !== false
     };
   });
   if (!profiles.length) profiles.push(...base.profiles);
@@ -88,6 +94,9 @@ class KeyboardStore {
   state = $state<KeyboardState>(defaults());
   platform = $state<'web' | 'macos' | 'ios' | 'android' | 'windows' | 'linux'>('web');
   active = $derived(this.state.profiles.find((profile) => profile.id === this.state.activeID) ?? this.state.profiles[0]);
+  /** Keyboard languages this host can type. */
+  languages = $derived<KeyboardLanguage[]>(chinesePlatforms.includes(this.platform) || this.state.profiles.some((profile) => profile.language === 'zh')
+    ? ['vi', 'en', 'zh'] : ['vi', 'en']);
 
   load() {
     let native = typeof window !== 'undefined' ? window.__SIEUVIET_NATIVE__ : undefined;

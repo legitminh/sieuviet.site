@@ -59,6 +59,16 @@
     "en": "Show virtual keyboard",
     "zh": "显示虚拟键盘"
   },
+  "suggestions": {
+    "vi": "Gợi ý",
+    "en": "Suggestions",
+    "zh": "建议"
+  },
+  "suggestionsHelp": {
+    "vi": "Hiện phần còn lại của từ hoặc cụm từ phía trên bàn phím. Tab hoặc chạm để chọn gợi ý; dấu cách chỉ gõ dấu cách.",
+    "en": "Show word and phrase suffixes above the keyboard. Tab or a tap accepts a suggestion; Space only types a space.",
+    "zh": "在键盘上方显示词或短语的剩余部分。按 Tab 或轻点接受建议；空格只输入空格。"
+  },
   "hideKeyboardHelp": {
     "vi": "Tắt để ẩn hoàn toàn bảng phím khi gõ.",
     "en": "Turn off to hide the keyboard guide while typing.",
@@ -529,11 +539,6 @@
     "en": "Start typing",
     "zh": "开始输入"
   },
-  "suggestions": {
-    "vi": "Gợi ý",
-    "en": "Suggestions",
-    "zh": "建议"
-  },
   "suggestionsOn": {
     "vi": "Gợi ý: bật",
     "en": "Suggestions: on",
@@ -548,6 +553,46 @@
     "vi": "Tab hoặc chạm để chọn gợi ý. Dấu cách không chọn gợi ý.",
     "en": "Tab or tap to accept a suggestion. Space never accepts one.",
     "zh": "按 Tab 或轻点以接受建议。空格不会接受建议。"
+  },
+  "keyboardLanguage.english": {
+    "vi": "Tiếng Anh",
+    "en": "English",
+    "zh": "英语"
+  },
+  "keyboardLanguage.vietnamese": {
+    "vi": "Tiếng Việt",
+    "en": "Vietnamese",
+    "zh": "越南语"
+  },
+  "keyboardLanguage.chinese": {
+    "vi": "Tiếng Trung",
+    "en": "Chinese",
+    "zh": "中文"
+  },
+  "simplifiedChinese": {
+    "vi": "Tiếng Trung giản thể",
+    "en": "Simplified Chinese",
+    "zh": "简体中文"
+  },
+  "suggestionsHelp.english": {
+    "vi": "Gợi ý hoàn tất từ tiếng Anh. Tab hoặc chạm để chọn gợi ý.",
+    "en": "Suggest English word completions. Tab or a tap accepts a suggestion.",
+    "zh": "建议英语单词补全。按 Tab 或轻点接受建议。"
+  },
+  "suggestionsHelp.chinese": {
+    "vi": "Gợi ý hoàn tất từ và cụm từ từ các phím đã nhập. Tắt vẫn giữ danh sách chữ Hán để chuyển đổi.",
+    "en": "Complete Chinese words and phrases from partial input. Conversion candidates remain available when off.",
+    "zh": "根据已输入的按键补全词和短语。关闭后仍保留汉字转换候选。"
+  },
+  "suggestionsHelp.vietnamese": {
+    "vi": "Hiện phần còn lại của từ hoặc cụm từ phía trên bàn phím. Tab hoặc chạm để chọn gợi ý; dấu cách chỉ gõ dấu cách.",
+    "en": "Show word and phrase suffixes above the keyboard. Tab or a tap accepts a suggestion; Space only types a space.",
+    "zh": "在键盘上方显示词或短语的剩余部分。按 Tab 或轻点接受建议；空格只输入空格。"
+  },
+  "shiftTapHelp": {
+    "vi": "Nhấn nhanh một mình để đổi bàn phím. Giữ hoặc kết hợp phím khác để dùng Shift bình thường.",
+    "en": "Tap alone for the next keyboard. Hold or combine with another key for normal Shift.",
+    "zh": "单独轻按可切换到下一个键盘。按住或与其他键组合则为普通 Shift。"
   },
   "theme": {
     "vi": "Màu giao diện",

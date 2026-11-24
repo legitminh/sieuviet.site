@@ -5,8 +5,10 @@
   import { keyboards, paradigms, defaultShiftTapSeconds, shiftTapRange, type KeyboardLanguage, type OutputType } from './keyboards.svelte';
   import { t, ui } from './copy.svelte';
 
-  const languageName = (language: KeyboardLanguage) => t(language === 'vi' ? 'vietnamese' : 'english');
-  const outputName = (output: OutputType) => output === 'literal' ? t('literalOutput') : output === 'sieuviet' ? 'siêu việt' : output;
+  const languageName = (language: KeyboardLanguage) => t(language === 'vi' ? 'vietnamese' : language === 'en' ? 'english' : 'keyboardLanguage.chinese');
+  const suggestionsHelp = (language: KeyboardLanguage) => t(language === 'vi' ? 'suggestionsHelp.vietnamese' : language === 'en' ? 'suggestionsHelp.english' : 'suggestionsHelp.chinese');
+  const outputName = (output: OutputType) => output === 'literal' ? t('literalOutput') : output === 'sieuviet' ? 'siêu việt'
+    : output === 'Simplified Chinese' ? t('simplifiedChinese') : output;
   let seconds = $state(keyboards.state.shiftTapSeconds);
   $effect(() => { seconds = keyboards.state.shiftTapSeconds; });
 </script>
@@ -37,7 +39,7 @@
         </div>
         <div class="field" role="group" aria-label={t('languageProfile', { name })}>
           <span class="label">{t('keyboardLanguage')}</span>
-          {#each ['vi', 'en'] as const as language}
+          {#each keyboards.languages as language}
             <Button on_close={() => keyboards.update(profile.id, { language })}>
               <span class:chosen={profile.language === language}>{languageName(language)}</span>
             </Button>
@@ -69,6 +71,13 @@
             <span class:chosen={profile.showVirtualKeyboard}>{profile.showVirtualKeyboard ? '✓' : '○'} {t('showKeyboard')}</span>
           </Button>
         </div>
+        <div class="field" role="group" aria-label={t('suggestions') + ': ' + name}>
+          <span class="label">{t('suggestions')}</span>
+          <Button on_close={() => keyboards.update(profile.id, { suggestionsEnabled: !profile.suggestionsEnabled })}>
+            <span class:chosen={profile.suggestionsEnabled}>{profile.suggestionsEnabled ? t('suggestionsOn') : t('suggestionsOff')}</span>
+          </Button>
+        </div>
+        <LineText><p class="muted">{suggestionsHelp(profile.language)}</p></LineText>
       </li>
     {/each}
   </ol>
