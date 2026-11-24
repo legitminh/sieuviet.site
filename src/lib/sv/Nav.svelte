@@ -14,7 +14,7 @@
 </script>
 
 <nav class="sv-nav" aria-label="siêu việt">
-  <SubKeyframe label={t('language')} items={languageItems} backLabel={t('back')} class="brand">
+  <SubKeyframe label={t('language')} items={languageItems} backLabel={t('back')} presentation="overlay" class="brand">
     {#snippet triggerContent()}<strong>★ siêu việt</strong> <span class="current-language">{languageNames[ui.language]} ▾</span>{/snippet}
   </SubKeyframe>
   {#each pages as item, index}
@@ -35,8 +35,6 @@
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 25%, transparent); font-size: 15px; line-height: 1.2; }
   .sv-nav :global(*) { font-size: inherit; }
   .sv-nav :global(.brand) { letter-spacing: .04em; margin-right: .25rem; }
-  /* Drop the menu over the page instead of pushing the nav apart. */
-  .sv-nav :global(.brand .subkeyframe-panel) { position: absolute; top: 100%; left: 0; z-index: 20; min-width: 12rem; }
   .current-language { opacity: .65; font-size: .85em; }
   .spacer { flex: 1 1 auto; }
   .gear { font-size: 1.5em; line-height: 1; }

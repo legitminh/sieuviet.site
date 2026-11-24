@@ -45,7 +45,7 @@
         <div class="field" role="group" aria-label={t('languageProfile', { name })}>
           <span class="label">{t('keyboardLanguage')}</span>
           <SubKeyframe label={t('languageProfile', { name })} items={languageItems(profile.id, profile.language)}
-            backLabel={t('back')} class="language-menu">
+            backLabel={t('back')} presentation="overlay" class="language-menu">
             {#snippet triggerContent()}<span class="chosen">{languageName(profile.language)}</span> ▾{/snippet}
           </SubKeyframe>
         </div>
@@ -98,8 +98,6 @@
 </section>
 
 <style>
-  /* Drop the language menu over the card instead of pushing the fields apart. */
-  .keyboards :global(.language-menu .subkeyframe-panel) { position: absolute; top: 100%; left: 0; z-index: 20; min-width: 16rem; white-space: nowrap; }
   .keyboards { width: min(100%, 46rem); margin: 0 auto; padding: 0 calc(var(--min-box) / 2) calc(var(--min-box) * 2); box-sizing: border-box; }
   h1 { margin-bottom: 0; }
   .muted { opacity: .65; font-size: .9em; }
