@@ -1,23 +1,31 @@
 <script lang="ts">
-  let { onpress, ondragstart, onmove, pressed = false, label = "space" }: {
+  let { onpress, ondragstart, onmove, onlines, ondragend, pressed = false, label = "space" }: {
     label?: string;
     onpress: () => void;
     ondragstart: () => void;
+    /** Horizontal drag: move the caret by characters. */
     onmove: (steps: number) => void;
+    /** Vertical drag: move the caret by lines. */
+    onlines?: (lines: number) => void;
+    ondragend?: () => void;
     pressed?: boolean;
   } = $props();
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   let dragging = $state(false);
   let lastX = 0;
+  let lastY = 0;
   let remainder = 0;
+  let vertical = 0;
   let pointer = -1;
 
   function reset() {
     if (timer) clearTimeout(timer);
     timer = undefined;
+    if (dragging) ondragend?.();
     dragging = false;
     remainder = 0;
+    vertical = 0;
     pointer = -1;
   }
 
@@ -25,7 +33,9 @@
     event.preventDefault();
     pointer = event.pointerId;
     lastX = event.clientX;
+    lastY = event.clientY;
     remainder = 0;
+    vertical = 0;
     event.currentTarget instanceof HTMLElement && event.currentTarget.setPointerCapture(pointer);
     timer = setTimeout(() => {
       dragging = true;
@@ -41,6 +51,13 @@
     if (steps) {
       remainder -= steps * 12;
       onmove(steps);
+    }
+    vertical += event.clientY - lastY;
+    lastY = event.clientY;
+    const lines = Math.trunc(vertical / 24);
+    if (lines && onlines) {
+      vertical -= lines * 24;
+      onlines(lines);
     }
   }
 

@@ -1,76 +1,52 @@
 <script lang="ts">
-  // Testing ground: a full text editor in its own Keyflow editing frame, typed
-  // with the configured keyboards through the same input method as the apps.
-  import { onMount, tick } from 'svelte';
+  // Testing ground: a full text editor in its own Keyflow editing frame, typed with
+  // the configured keyboards. Every key and touch goes through the shared Swift core
+  // (WebAssembly), the same session the native keyboards run.
+  import { onMount, tick, untrack } from 'svelte';
   import { TextBox, type TextBoxController } from '@legitminh/keyflow';
-  import { SieuvietInputMethod } from './input-method';
+  import { CoreInputMethod, keyPosition } from './input-method';
+  import { TouchAction } from './core/bridge';
+  import { core } from './core/core.svelte';
   import { keyboards } from './keyboards.svelte';
   import { t } from './copy.svelte';
   import TouchKeyboard from './TouchKeyboard.svelte';
-  import { predict } from './prediction';
 
   let { nav }: { nav: import('svelte').Snippet } = $props();
   let text = $state('');
   let editor = $state<TextBoxController>();
-  let keyboard = $state<TouchKeyboard>();
-  let revision = $state(0);
   let pressed = $state(new Set<string>());
   const touch = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
-  const method = new SieuvietInputMethod(
-    () => keyboards.active,
-    () => keyboards.next(),
-    () => keyboards.state.shiftTapSeconds,
-    () => keyboard?.isCapsLock() ?? false
-  );
-  method.onchange = () => { revision = method.revision; };
-  // Suggestions are computed in idle time after the text changes, never on the
-  // key path, so typing speed does not depend on them. Space types a space; only
-  // Tab or a tap accepts a suggestion.
-  // Each keyboard keeps its own suggestions setting, shared with the native keyboards.
-  let suggestionsOn = $derived(keyboards.active.suggestionsEnabled && keyboards.active.language !== 'zh');
-  let suggestions = $state<string[]>([]);
-  const wordAtEnd = (value: string) => value.match(/\p{L}+$/u)?.[0] ?? '';
+  // A Shift tap moves the core to another keyboard; the list follows it.
+  const method = new CoreInputMethod((id) => { if (id !== keyboards.state.activeID) keyboards.select(id); });
+  const send = (action: TouchAction, argument = 0, value = '') =>
+    editor?.edit((composition) => method.touch(composition, action, argument, value));
+
+  // The keyboard list, the active keyboard and the Shift tap time go to the core on every change.
   $effect(() => {
-    const value = text, enabled = suggestionsOn;
-    if (!enabled) { suggestions = []; return; }
-    const run = () => { suggestions = predict(value, wordAtEnd(value), 8); };
-    if (typeof requestIdleCallback === 'function') {
-      const handle = requestIdleCallback(run, { timeout: 400 });
-      return () => cancelIdleCallback(handle);
-    }
-    const handle = setTimeout(run, 60);
-    return () => clearTimeout(handle);
+    const snapshot = $state.snapshot(keyboards.state);
+    if (core.ready) untrack(() => core.configure(snapshot));
   });
+  let view = $derived(core.state);
+  let suggestions = $derived(view?.suggestionsEnabled ? view.suggestions : []);
+  let loadingDictionary = $derived(view?.language === 'zh' && !view.chineseDictionary);
+  const wordAtEnd = (value: string) => value.match(/\p{L}+$/u)?.[0] ?? '';
   function toggleSuggestions() {
     keyboards.update(keyboards.active.id, { suggestionsEnabled: !keyboards.active.suggestionsEnabled });
   }
-  /** Complete the word at the caret with `suffix`, then a space. */
-  function acceptInto(composition: import('@legitminh/keyflow').TextComposition, suffix: string) {
-    const target = wordAtEnd(composition.value.slice(0, composition.selectionStart)) + suffix;
-    method.finish(composition);
-    const current = wordAtEnd(composition.value.slice(0, composition.selectionStart));
-    if (target.toLocaleLowerCase('vi').startsWith(current.toLocaleLowerCase('vi'))) composition.insert(target.slice(current.length) + ' ');
-    else { for (const _ of new Intl.Segmenter('vi', { granularity: 'grapheme' }).segment(current)) composition.deleteBackward(); composition.insert(target + ' '); }
-    suggestions = [];
-  }
-  function accept(suffix: string) { editor?.edit((composition) => acceptInto(composition, suffix)); }
-  method.onaccept = (composition) => {
-    if (!suggestionsOn || !suggestions.length) return false;
-    acceptInto(composition, suggestions[0]);
-    return true;
-  };
   // Touch screens always need the on-screen keyboard; computers follow the keyboard's guide setting.
   let showKeyboard = $derived(touch || keyboards.active.showVirtualKeyboard);
 
   onMount(() => {
+    void core.load();
     const press = (down: boolean) => (event: KeyboardEvent) => {
       const next = new Set(pressed);
-      const key = event.key === ' ' ? ' ' : event.key.toLowerCase();
-      if (down) next.add(key); else next.delete(key);
+      const position = keyPosition(event.code, event.key);
+      if (down) next.add(position); else next.delete(position);
       pressed = next;
     };
-    const down = press(true), up = press(false), clear = () => { pressed = new Set(); };
+    const down = press(true), up = press(false);
+    const clear = () => { pressed = new Set(); core.instance?.touch(TouchAction.cancelHolds); };
     addEventListener('keydown', down, true);
     addEventListener('keyup', up, true);
     addEventListener('blur', clear);
@@ -81,22 +57,22 @@
 
 <div class="try-page">
   {@render nav()}
-  <p class="status" aria-live="polite">{t('typingWith', { name: keyboards.displayName(keyboards.active) })} · {t('tryHelp')}</p>
+  <p class="status" aria-live="polite">{t('typingWith', { name: keyboards.displayName(keyboards.active) })} · {t('tryHelp')}
+    {#if core.failed} · {t('coreFailed')}{:else if loadingDictionary} · {t('loadingDictionary')}{/if}</p>
   <div class="suggestions" aria-label={t('suggestions')} data-keyflow-textbox-keep-open>
     <button type="button" class="toggle" onpointerdown={(event) => event.preventDefault()} onclick={toggleSuggestions}>
-      {suggestionsOn ? t('suggestionsOn') : t('suggestionsOff')}</button>
-    {#if suggestionsOn}
-      {#each suggestions as suggestion, index (suggestion)}
-        <button type="button" class:first={index === 0} title={index === 0 ? t('acceptSuggestionHelp') : undefined}
-          onpointerdown={(event) => event.preventDefault()} onclick={() => accept(suggestion)}>{wordAtEnd(text) + suggestion}</button>
-      {/each}
-    {/if}
+      {keyboards.active.suggestionsEnabled ? t('suggestionsOn') : t('suggestionsOff')}</button>
+    {#each suggestions as suggestion, index (index + suggestion)}
+      <button type="button" class:first={index === 0} title={index === 0 && view?.language !== 'zh' ? t('acceptSuggestionHelp') : undefined}
+        onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.suggestion, index)}>
+        {view?.language === 'zh' ? `${index % 9 + 1} ${suggestion}` : wordAtEnd(text) + suggestion}</button>
+    {/each}
   </div>
   <TextBox bind:this={editor} bind:value={text} inputMethod={method} label={t('tryTyping')} placeholder={t('tryTyping')}
     enterTrigger="t" rows={6} class="try-editor" spellcheck={false} autocomplete="off" autocapitalize="off"
     inputmode={touch ? 'none' : undefined} />
   {#if showKeyboard}
-    <div class="dock" data-keyflow-textbox-keep-open><TouchKeyboard bind:this={keyboard} {method} {revision} {pressed} /></div>
+    <div class="dock" data-keyflow-textbox-keep-open><TouchKeyboard {send} {pressed} /></div>
   {/if}
 </div>
 

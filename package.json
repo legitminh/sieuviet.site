@@ -4,11 +4,13 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
+    "dev": "node scripts/core.mjs && vite dev",
+    "build": "node scripts/core.mjs && vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "core": "node scripts/core.mjs",
+    "english-words": "node scripts/english-words.mjs"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.10",
@@ -17,7 +19,8 @@
     "svelte": "^5.56.10",
     "svelte-check": "^4.6.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "wordlist-english": "1.2.1"
   },
   "dependencies": {
     "@legitminh/keyflow": "file:vendor/legitminh-keyflow-0.15.0.tgz"

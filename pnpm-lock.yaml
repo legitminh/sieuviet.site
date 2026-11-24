@@ -33,6 +33,9 @@ importers:
       vite:
         specifier: ^8.0.16
         version: 8.3.8
+      wordlist-english:
+        specifier: 1.2.1
+        version: 1.2.1
 
 packages:
 
@@ -62,7 +65,7 @@ packages:
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
   '@legitminh/keyflow@file:vendor/legitminh-keyflow-0.15.0.tgz':
-    resolution: {integrity: sha512-PC3/iAytAP8VC+NXXCYGCS+6vTxmg2rml5/EDvYOORAEOmG8t2G/St/7BshBr/bPZwQgNwwUMfJXKtI0B82Y4w==, tarball: file:vendor/legitminh-keyflow-0.15.0.tgz}
+    resolution: {integrity: sha512-PC3/iAytAP8VC+NXXCYGCS+6vTxmg2rml5/EDvYOORAEOmG8t2G/St/7BshBr/bPZwQgNwwUMfJXKtI0B82Y4w==}
     version: 0.15.0
     engines: {node: '>=22'}
     peerDependencies:
@@ -516,6 +519,9 @@ packages:
       vite:
         optional: true
 
+  wordlist-english@1.2.1:
+    resolution: {integrity: sha512-vaiQQiu95UeON0WZFtiTrWfZmIiUd2rhrhMCBeEzwq3oTVzHCX8naGCqv/smSspE9kH2sN+E8lZyV0JZjqSzGw==}
+
   zimmerframe@1.1.5:
     resolution: {integrity: sha512-msJxIvYDYcoNL+PJsu+7qmpDWsYmAxTY+2TNYXXF0hzBzBk0BMecOqDOG/EckUoKCuKwObfbugIl8QpqHDXeFA==}
 
@@ -887,5 +893,7 @@ snapshots:
   vitefu@1.1.4(vite@8.3.8):
     optionalDependencies:
       vite: 8.3.8
+
+  wordlist-english@1.2.1: {}
 
   zimmerframe@1.1.5: {}

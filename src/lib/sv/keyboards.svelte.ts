@@ -29,8 +29,8 @@ export const paradigms: Record<KeyboardLanguage, { inputs: InputType[]; outputs:
   en: { inputs: ['qwerty'], outputs: ['literal'] },
   zh: { inputs: ['Microsoft Shuangpin'], outputs: ['Simplified Chinese'] }
 };
-/** Chinese (Microsoft Shuangpin with the offline pinyin dictionary) is typed by the Mac and iOS keyboards. */
-const chinesePlatforms = ['macos', 'ios'];
+/** Chinese (Microsoft Shuangpin with the offline pinyin dictionary) is typed by the Mac and iOS keyboards and the web demo. */
+const chinesePlatforms = ['web', 'macos', 'ios'];
 export const defaultShiftTapSeconds = 0.2;
 export const shiftTapRange = [0.01, 5] as const;
 
