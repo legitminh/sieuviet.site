@@ -5,12 +5,15 @@ import { t, ui, type Language } from './copy.svelte';
 export type KeyboardLanguage = 'vi' | 'en' | 'zh';
 export type InputType = 'ascii+' | 'grid4x8' | 'qwerty' | 'Microsoft Shuangpin';
 export type OutputType = 'sieuviet' | 'quốc ngữ' | 'literal' | 'Simplified Chinese';
+/** What the keys spell: siêu việt's own choices or quốc ngữ's. Vietnamese keyboards only. */
+export type InputMode = 'sieuviet' | 'quốc ngữ';
 
 export interface KeyboardProfile {
   id: string;
   name: string;
   language: KeyboardLanguage;
   inputType: InputType;
+  inputMode: InputMode;
   outputType: OutputType;
   showVirtualKeyboard: boolean;
   /** Completion suggestions for this keyboard; Tab or a tap accepts one, Space never does. */
@@ -24,10 +27,10 @@ export interface KeyboardState {
 }
 
 /** Each keyboard language allows its own input layouts and outputs; the first is the default. */
-export const paradigms: Record<KeyboardLanguage, { inputs: InputType[]; outputs: OutputType[] }> = {
-  vi: { inputs: ['ascii+', 'grid4x8'], outputs: ['sieuviet', 'quốc ngữ'] },
-  en: { inputs: ['qwerty'], outputs: ['literal'] },
-  zh: { inputs: ['Microsoft Shuangpin'], outputs: ['Simplified Chinese'] }
+export const paradigms: Record<KeyboardLanguage, { inputs: InputType[]; modes: InputMode[]; outputs: OutputType[] }> = {
+  vi: { inputs: ['ascii+', 'grid4x8'], modes: ['sieuviet', 'quốc ngữ'], outputs: ['sieuviet', 'quốc ngữ'] },
+  en: { inputs: ['qwerty'], modes: ['sieuviet'], outputs: ['literal'] },
+  zh: { inputs: ['Microsoft Shuangpin'], modes: ['sieuviet'], outputs: ['Simplified Chinese'] }
 };
 /** Chinese (Microsoft Shuangpin with the offline pinyin dictionary) is typed by the Mac and iOS keyboards and the web demo. */
 const chinesePlatforms = ['web', 'macos', 'ios'];
@@ -59,7 +62,7 @@ function uuid() {
 }
 
 export function makeProfile(language: KeyboardLanguage, name: string): KeyboardProfile {
-  return { id: uuid(), name, language, inputType: paradigms[language].inputs[0],
+  return { id: uuid(), name, language, inputType: paradigms[language].inputs[0], inputMode: paradigms[language].modes[0],
     outputType: paradigms[language].outputs[0], showVirtualKeyboard: true, suggestionsEnabled: true };
 }
 function defaults(): KeyboardState {
@@ -72,9 +75,12 @@ function normalize(value: Partial<KeyboardState> | null | undefined, base = defa
   const profiles = (value?.profiles ?? base.profiles).filter((profile) => profile && profile.id).map((profile) => {
     const language: KeyboardLanguage = profile.language === 'en' || profile.language === 'zh' ? profile.language : 'vi';
     const allowed = paradigms[language];
+    // Keep fields this UI does not edit (for example a native custom ASCII+ keymap), so saving never drops them.
     return {
+      ...profile,
       id: String(profile.id), name: String(profile.name ?? ''), language,
       inputType: allowed.inputs.includes(profile.inputType) ? profile.inputType : allowed.inputs[0],
+      inputMode: allowed.modes.includes(profile.inputMode) ? profile.inputMode : allowed.modes[0],
       outputType: allowed.outputs.includes(profile.outputType) ? profile.outputType : allowed.outputs[0],
       showVirtualKeyboard: profile.showVirtualKeyboard !== false,
       suggestionsEnabled: profile.suggestionsEnabled !== false
@@ -160,6 +166,7 @@ class KeyboardStore {
     Object.assign(profile, change);
     const allowed = paradigms[profile.language];
     if (!allowed.inputs.includes(profile.inputType)) profile.inputType = allowed.inputs[0];
+    if (!allowed.modes.includes(profile.inputMode)) profile.inputMode = allowed.modes[0];
     if (!allowed.outputs.includes(profile.outputType)) profile.outputType = allowed.outputs[0];
     this.save();
   }

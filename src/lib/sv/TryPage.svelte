@@ -11,7 +11,8 @@
   import { t } from './copy.svelte';
   import TouchKeyboard from './TouchKeyboard.svelte';
 
-  let { nav }: { nav: import('svelte').Snippet } = $props();
+  let { nav }: { nav: import('svelte').Snippet<[(() => void)?]> } = $props();
+  let editing = $state(false);
   let text = $state('');
   let editor = $state<TextBoxController>();
   let pressed = $state(new Set<string>());
@@ -56,7 +57,8 @@
 </script>
 
 <div class="try-page">
-  {@render nav()}
+  <!-- While typing, the nav offers "exit" (the same as Esc) for touchpad and pointer users. -->
+  {@render nav(editing ? () => editor?.exit() : undefined)}
   <p class="status" aria-live="polite">{t('typingWith', { name: keyboards.displayName(keyboards.active) })} · {t('tryHelp')}
     {#if core.failed} · {t('coreFailed')}{:else if loadingDictionary} · {t('loadingDictionary')}{/if}</p>
   <div class="suggestions" aria-label={t('suggestions')} data-keyflow-textbox-keep-open>
@@ -70,7 +72,8 @@
   </div>
   <TextBox bind:this={editor} bind:value={text} inputMethod={method} label={t('tryTyping')} placeholder={t('tryTyping')}
     enterTrigger="t" rows={6} class="try-editor" spellcheck={false} autocomplete="off" autocapitalize="off"
-    inputmode={touch ? 'none' : undefined} />
+    inputmode={touch ? 'none' : undefined}
+    onenter={() => (editing = true)} onexit={() => (editing = false)} />
   {#if showKeyboard}
     <div class="dock" data-keyflow-textbox-keep-open><TouchKeyboard {send} {pressed} /></div>
   {/if}
@@ -83,10 +86,14 @@
   .try-page :global(.editor-status) { font-size: 12px; line-height: 1.4; opacity: .6; margin: .2rem 0; }
   .try-page :global(.try-editor) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; margin: 0;
     padding: 0 calc(var(--min-box) / 4); }
-  .try-page :global(.try-editor > section) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  .try-page :global(.try-editor > section[hidden]) { display: none; }
+  .try-page :global(.try-editor > section:not([hidden])) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
   .try-page :global(.try-editor textarea) { flex: 1 1 auto; min-height: 4rem; resize: none;
     font: 400 clamp(22px, 4vw, 32px)/1.42 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
-  .try-page :global(.try-editor .text-entry) { flex: 1 1 auto; font: 400 clamp(22px, 4vw, 32px)/1.42 ui-monospace, monospace; }
+  /* Outside the editor the textbox itself is the entry button, with its keypath (t) shown inline. */
+  .try-page :global(.try-editor .text-entry) { flex: 1 1 auto; min-height: 4rem; display: flex; align-items: flex-start; gap: .4ch;
+    font: 400 clamp(22px, 4vw, 32px)/1.42 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    border: 1px solid currentColor; border-radius: .25rem; background: var(--background); color: inherit; cursor: text; }
   .suggestions { display: flex; gap: .35rem; overflow-x: auto; scrollbar-width: none; padding: .25rem calc(var(--min-box) / 4);
     font-size: 14px; min-height: 2.2rem; align-items: center; }
   .suggestions button { flex: 0 0 auto; font: inherit; color: inherit; background: transparent; cursor: pointer; white-space: nowrap;

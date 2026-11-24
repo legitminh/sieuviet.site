@@ -39,7 +39,7 @@
   <meta name="description" content="siêu việt manages your keyboards and types vietnamese by sound in four choices. try every configured keyboard in your browser." />
 </svelte:head>
 
-{#snippet nav()}<Nav {page} {go} />{/snippet}
+{#snippet nav(exit?: () => void)}<Nav {page} {go} {exit} />{/snippet}
 
 {#if page === 'try' && ready}
   <TryPage {nav} />

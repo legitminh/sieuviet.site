@@ -2,7 +2,7 @@
   import { Button } from '@legitminh/keyflow';
   import { t } from './copy.svelte';
   export type Page = 'intro' | 'keyboards' | 'try' | 'settings';
-  let { page, go }: { page: Page; go: (page: Page) => void } = $props();
+  let { page, go, exit }: { page: Page; go: (page: Page) => void; exit?: () => void } = $props();
   const pages: Page[] = ['intro', 'keyboards', 'try'];
   const names = { intro: 'pageIntro', keyboards: 'pageKeyboards', try: 'pageTry', settings: 'pageSettings' } as const;
 </script>
@@ -14,6 +14,12 @@
     </Button>
   {/each}
   <span class="spacer"></span>
+  {#if exit}
+    <!-- Shown while typing in the keyboard: the same as Esc, for touchpad and pointer users. A plain
+         button, because the nav's Keyflow buttons belong to the frame the editor has taken over. -->
+    <button type="button" class="exit" data-keyflow-textbox-keep-open title="esc"
+      onpointerdown={(event) => event.preventDefault()} onclick={exit}>{t('exit')} <kbd>esc</kbd></button>
+  {/if}
   <Button priority={3} on_close={() => go('settings')}>
     <span class="gear" class:current={page === 'settings'} aria-current={page === 'settings' ? 'page' : undefined}
       role="img" aria-label={t('settings')} title={t('settings')}>⚙</span>
@@ -26,6 +32,10 @@
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 25%, transparent); font-size: 15px; line-height: 1.2; }
   .sv-nav :global(*) { font-size: inherit; }
   .spacer { flex: 1 1 auto; }
+  .exit { font: inherit; color: inherit; background: transparent; cursor: pointer; min-height: var(--min-box);
+    border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent); border-radius: 4px; padding: 0 .6rem; }
+  .exit:hover, .exit:focus-visible { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); }
+  .exit kbd { font: inherit; font-size: .8em; opacity: .6; }
   .gear { font-size: 1.5em; line-height: 1; }
   .current { font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
 </style>

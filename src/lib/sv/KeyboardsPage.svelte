@@ -2,12 +2,13 @@
   // Keyboard management, matching the Mac settings window: the list switched
   // by a Shift tap, each keyboard's language, input and output, and the tap limit.
   import { Button, LineText, NumberBox, SubKeyframe, type SubKeyframeItem } from '@legitminh/keyflow';
-  import { keyboards, paradigms, defaultShiftTapSeconds, shiftTapRange, type KeyboardLanguage, type OutputType } from './keyboards.svelte';
+  import { keyboards, paradigms, defaultShiftTapSeconds, shiftTapRange, type InputMode, type KeyboardLanguage, type OutputType } from './keyboards.svelte';
   import { t, ui } from './copy.svelte';
 
   const languageName = (language: KeyboardLanguage) => t(language === 'vi' ? 'vietnamese' : language === 'en' ? 'english' : 'keyboardLanguage.chinese');
   const outputName = (output: OutputType) => output === 'literal' ? t('literalOutput') : output === 'sieuviet' ? 'siêu việt'
     : output === 'Simplified Chinese' ? t('simplifiedChinese') : output;
+  const modeName = (mode: InputMode) => mode === 'sieuviet' ? 'siêu việt' : mode;
   /** Each keyboard's language is a dropdown of the languages this app offers. */
   const languageItems = (id: string, current: KeyboardLanguage): SubKeyframeItem[] => keyboards.languages.map((language) => ({
     id: language, label: `${current === language ? '✓ ' : ''}${languageName(language)}`,
@@ -48,6 +49,16 @@
             {#each paradigms[profile.language].inputs as inputType}
               <Button on_close={() => keyboards.update(profile.id, { inputType })}>
                 <span class:chosen={profile.inputType === inputType}>{inputType}</span>
+              </Button>
+            {/each}
+          </div>
+        {/if}
+        {#if paradigms[profile.language].modes.length > 1}
+          <div class="field" role="group" aria-label={t('inputModeProfile', { name })}>
+            <span class="label">{t('inputModeLabel')}</span>
+            {#each paradigms[profile.language].modes as inputMode}
+              <Button on_close={() => keyboards.update(profile.id, { inputMode })}>
+                <span class:chosen={profile.inputMode === inputMode}>{modeName(inputMode)}</span>
               </Button>
             {/each}
           </div>
