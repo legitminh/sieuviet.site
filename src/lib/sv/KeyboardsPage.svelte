@@ -79,6 +79,14 @@
             <span class:chosen={profile.showVirtualKeyboard}>{profile.showVirtualKeyboard ? '✓' : '○'} {t('showKeyboard')}</span>
           </Button>
         </div>
+        {#if profile.language === 'vi'}
+          <div class="field" role="group" aria-label={t('adaptivePunctuation') + ': ' + name}>
+            <span class="label">{t('adaptivePunctuation')}</span>
+            <Button on_close={() => keyboards.update(profile.id, { adaptivePunctuation: !profile.adaptivePunctuation })}>
+              <span class:chosen={profile.adaptivePunctuation}>{profile.adaptivePunctuation ? t('adaptivePunctuationOn') : t('adaptivePunctuationOff')}</span>
+            </Button>
+          </div>
+        {/if}
         <div class="field" role="group" aria-label={t('suggestions') + ': ' + name}>
           <span class="label">{t('suggestions')}</span>
           <Button on_close={() => keyboards.update(profile.id, { suggestionsEnabled: !profile.suggestionsEnabled })}>
@@ -89,6 +97,7 @@
     {/each}
   </ol>
 
+  <LineText><p class="muted">{t('adaptivePunctuationHelp')}</p></LineText>
   <LineText><p class="muted">{t('roundHelp')}</p></LineText>
   <div class="field" role="group" aria-label={t('shiftLimit')}>
     <span class="label">{t('shiftLimit')}</span>

@@ -25,6 +25,8 @@ export interface CoreState {
   capsLock: boolean;
   /** 0 letters, 1 numbers, 2 symbols. */
   page: number;
+  /** The letter layer's comma and period for this keyboard (，。 for Chinese). */
+  marks: [string, string];
   symbols: string[][];
   rows: CoreKey[][];
   chineseDictionary: boolean;
@@ -33,6 +35,7 @@ export interface CoreState {
 export interface DocumentSnapshot { before: string; after: string; selected: string; marked: number; identifier: string }
 export interface CoreProfile {
   id: string; name: string; language: string; inputType: string; outputType: string; suggestionsEnabled: boolean; inputMode?: string;
+  adaptivePunctuation?: boolean;
 }
 
 export const TouchAction = {
@@ -140,7 +143,7 @@ export class SieuvietCore {
     const clean = (value: string) => value.replace(/[\t\n\0]/g, ' ');
     const lines = [[activeID, interfaceLanguage, String(shiftTapSeconds)].join('\t'),
       ...profiles.map((profile) => [profile.id, profile.language, profile.inputType, profile.outputType, profile.inputMode ?? 'sieuviet',
-        profile.suggestionsEnabled ? '1' : '0', clean(profile.name)].join('\t'))];
+        profile.suggestionsEnabled ? '1' : '0', clean(profile.name), profile.adaptivePunctuation === false ? '0' : '1'].join('\t'))];
     this.wasm.sv_configure(this.write(lines.join('\n')));
   }
   /** The textbox around the caret, before each event. */
