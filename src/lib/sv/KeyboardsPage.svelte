@@ -6,7 +6,6 @@
   import { t, ui } from './copy.svelte';
 
   const languageName = (language: KeyboardLanguage) => t(language === 'vi' ? 'vietnamese' : language === 'en' ? 'english' : 'keyboardLanguage.chinese');
-  const suggestionsHelp = (language: KeyboardLanguage) => t(language === 'vi' ? 'suggestionsHelp.vietnamese' : language === 'en' ? 'suggestionsHelp.english' : 'suggestionsHelp.chinese');
   const outputName = (output: OutputType) => output === 'literal' ? t('literalOutput') : output === 'sieuviet' ? 'siêu việt'
     : output === 'Simplified Chinese' ? t('simplifiedChinese') : output;
   /** Each keyboard's language is a dropdown of the languages this app offers. */
@@ -75,7 +74,6 @@
             <span class:chosen={profile.suggestionsEnabled}>{profile.suggestionsEnabled ? t('suggestionsOn') : t('suggestionsOff')}</span>
           </Button>
         </div>
-        <LineText><p class="muted">{suggestionsHelp(profile.language)}</p></LineText>
       </li>
     {/each}
   </ol>
