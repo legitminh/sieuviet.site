@@ -64,10 +64,12 @@
   <div class="suggestions" aria-label={t('suggestions')} data-keyflow-textbox-keep-open>
     <button type="button" class="toggle" onpointerdown={(event) => event.preventDefault()} onclick={toggleSuggestions}>
       {keyboards.active.suggestionsEnabled ? t('suggestionsOn') : t('suggestionsOff')}</button>
+    {#if view?.escaping}<span class="escaping" title={t('numberPicksDigit')}>-</span>{/if}
     {#each suggestions as suggestion, index (index + suggestion)}
       <button type="button" class:first={index === 0} title={index === 0 && view?.language !== 'zh' ? t('acceptSuggestionHelp') : undefined}
         onpointerdown={(event) => event.preventDefault()} onclick={() => send(TouchAction.suggestion, index)}>
-        {view?.language === 'zh' ? `${index % 9 + 1} ${suggestion}` : wordAtEnd(text) + suggestion}</button>
+        {view?.language === 'zh' ? `${index % 9 + 1} ${suggestion}`
+          : `${view?.numberPicks && !touch && index < 9 ? `${index + 1} ` : ''}${wordAtEnd(text) + suggestion}`}</button>
     {/each}
   </div>
   <TextBox bind:this={editor} bind:value={text} inputMethod={method} label={t('tryTyping')} placeholder={t('tryTyping')}
@@ -100,6 +102,7 @@
     border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent); border-radius: 999px; padding: .2rem .65rem; }
   .suggestions button.first { border-color: var(--primary); }
   .suggestions button.toggle { opacity: .7; }
+  .suggestions .escaping { flex: 0 0 auto; font-weight: 700; padding: 0 .35rem; }
   .dock { flex: 0 0 auto; border-top: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
     padding-bottom: env(safe-area-inset-bottom, 0); }
   .dock :global(.touch-keyboard) { max-width: 46rem; margin: 0 auto; }

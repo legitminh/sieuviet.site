@@ -14,6 +14,8 @@
     id: language, label: `${current === language ? '✓ ' : ''}${languageName(language)}`,
     on_select: () => keyboards.update(id, { language })
   }));
+  /** The field's label already names the setting; its button only says on or off. */
+  const onOff = (value: boolean) => value ? `✓ ${t('on')}` : `○ ${t('off')}`;
   let seconds = $state(keyboards.state.shiftTapSeconds);
   $effect(() => { seconds = keyboards.state.shiftTapSeconds; });
 </script>
@@ -76,22 +78,33 @@
         <div class="field" role="group" aria-label={t('showProfile', { name })}>
           <span class="label">{t('showKeyboard')}</span>
           <Button on_close={() => keyboards.update(profile.id, { showVirtualKeyboard: !profile.showVirtualKeyboard })}>
-            <span class:chosen={profile.showVirtualKeyboard}>{profile.showVirtualKeyboard ? '✓' : '○'} {t('showKeyboard')}</span>
+            <span class:chosen={profile.showVirtualKeyboard}>{onOff(profile.showVirtualKeyboard)}</span>
           </Button>
         </div>
         {#if profile.language === 'vi'}
           <div class="field" role="group" aria-label={t('adaptivePunctuation') + ': ' + name}>
             <span class="label">{t('adaptivePunctuation')}</span>
             <Button on_close={() => keyboards.update(profile.id, { adaptivePunctuation: !profile.adaptivePunctuation })}>
-              <span class:chosen={profile.adaptivePunctuation}>{profile.adaptivePunctuation ? t('adaptivePunctuationOn') : t('adaptivePunctuationOff')}</span>
+              <span class:chosen={profile.adaptivePunctuation}>{onOff(profile.adaptivePunctuation)}</span>
             </Button>
           </div>
         {/if}
         <div class="field" role="group" aria-label={t('suggestions') + ': ' + name}>
           <span class="label">{t('suggestions')}</span>
           <Button on_close={() => keyboards.update(profile.id, { suggestionsEnabled: !profile.suggestionsEnabled })}>
-            <span class:chosen={profile.suggestionsEnabled}>{profile.suggestionsEnabled ? t('suggestionsOn') : t('suggestionsOff')}</span>
+            <span class:chosen={profile.suggestionsEnabled}>{onOff(profile.suggestionsEnabled)}</span>
           </Button>
+          {#if profile.language !== 'zh'}
+            <!-- How number keys pick suggestions on a computer, and how "-" types digits and minus signs. -->
+            <SubKeyframe label={t('numberPicks')} backLabel={t('back')} presentation="overlay" class="number-picks">
+              {#snippet children()}
+                <LineText><p>{t('numberPicksHelp')}</p></LineText>
+                <LineText><p>{t('numberPicksDigit')}</p></LineText>
+                <LineText><p>{t('numberPicksMinus')}</p></LineText>
+                <LineText><p class="muted">{t('numberPicksGrid')}</p></LineText>
+              {/snippet}
+            </SubKeyframe>
+          {/if}
         </div>
       </li>
     {/each}
