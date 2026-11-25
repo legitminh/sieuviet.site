@@ -21,6 +21,10 @@ export interface CoreState {
   phase: number;
   suggestionsEnabled: boolean;
   suggestions: string[];
+  /** 1–9 pick the shown suggestions now (a computer keyboard on English or Vietnamese ASCII+). */
+  numberPicks?: boolean;
+  /** A "-" is held: the next key types itself ("-2" → 2, "--" → -). */
+  escaping?: boolean;
   uppercase: boolean;
   capsLock: boolean;
   /** 0 letters, 1 numbers, 2 symbols. */
